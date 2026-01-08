@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基于NLP的生词识别与学习系统</title>
+    <style>
+        * {margin: 0; padding: 0; box-sizing: border-box;}
+        body {font-family: 'Microsoft YaHei', sans-serif; background: #f0f2f5; color: #333;            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-image 1s ease-in-out;
+            min-height: 100vh;}
+        .header {background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%); padding: 20px; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+        .logo {display: flex; align-items: center; gap: 15px;}
+        .logo-icon {font-size: 2.5em; color: #ffffff;}
+        .logo-text {font-size: 1.8em; font-weight: bold;}
+        .nav {background: white; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+        .nav-list {list-style: none; display: flex; justify-content: space-around; max-width: 1200px; margin: 0 auto;}
+        .nav-item {padding: 10px 20px; border-radius: 5px; transition: all 0.3s ease;}
+        .nav-item a {text-decoration: none; color: #333; font-size: 1.1em;}
+        .nav-item:hover {background: #e8eaf6;}
+        .nav-item.active {background: #3f51b5;}
+        .nav-item.active a {color: white;}
+        .nav-item.logout {color: #f44336;}
+        .nav-item.logout:hover {background: #ffebee;}
+        .main-content {max-width: 800px; margin: 20px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+        .container {background-color: #f9f9f9; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+        .input-group {margin-bottom: 20px;}
+        input[type="text"], textarea {width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px;}
+        textarea {min-height: 100px; resize: vertical;}
+        button {background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;}
+        button:hover {background-color: #45a049;}
+        .result {margin-top: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 4px; background-color: #ffffff; line-height: 1.6; max-width: 100%; box-shadow: 0 0 8px rgba(0,0,0,0.1);}
+        .result p {margin-bottom: 10px; font-size: 1.1em;}
+        .analysis-section {background: #fff; padding: 15px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+        .analysis-title {font-size: 1.2em; color: #333; margin-bottom: 10px; font-weight: bold;}
+        .sentiment-result {display: flex; align-items: center; margin: 10px 0;}
+        .sentiment-bar {height: 20px; background: #e0e0e0; border-radius: 10px; flex-grow: 1; overflow: hidden;}
+        .sentiment-value {height: 100%; background: linear-gradient(90deg, #4CAF50, #8BC34A);}
+        .topic-tag {display: inline-block; padding: 5px 10px; margin: 5px; background: #e3f2fd; border-radius: 15px; color: #1976d2;}
+        .error {color: red; padding: 10px; background: #ffebee; border-radius: 4px;}
+        .sentiment-scores {display: flex; justify-content: space-between; margin: 10px 0;}
+        .sentiment-score {text-align: center; padding: 5px 10px; border-radius: 4px;}
+        .positive-score {background: #e8f5e9; color: #2e7d32;}
+        .negative-score {background: #ffebee; color: #c62828;}
+        .topic-item {display: flex; align-items: center; margin: 8px 0;}
+        .topic-info {margin-left: 10px; font-size: 0.9em; color: #666;}
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-book-reader logo-icon"></i>
+            <span class="logo-text">基于NLP的生词识别与学习系统</span>
+        </div>
+    </header>
+
+    <nav class="nav">
+        <ul class="nav-list">
+            <li class="nav-item"><a href="/"><i class="fas fa-home"></i> 首页</a></li>
+            <li class="nav-item"><a href="personal_information"><i class="fas fa-user"></i> 个人信息</a></li>
+            <li class="nav-item"><a href="word_recognition"><i class="fas fa-language"></i> 生词识别</a></li>
+            <li class="nav-item"><a href="word_learning"><i class="fas fa-graduation-cap"></i> 单词学习</a></li>
+            <li class="nav-item active"><a href="word_analysis"><i class="fas fa-chart-bar"></i> 文本分析</a></li>
+            <li class="nav-item logout"><a href="logout"><i class="fas fa-sign-out-alt"></i> 退出登录</a></li>
+        </ul>
+    </nav>
+
+    <div class="main-content">
+        <div class="container">
+            <h1>文本分析助手</h1>
+            
+            <form method="post" action="/analyze_word" class="input-group">
+                <input type="text" name="word" id="wordInput" placeholder="请输入要分析的单词">
+                <button type="submit">单词分析</button>
+            </form>
+
+            <form method="post" action="/analyze_text" class="input-group">
+                <textarea name="text" id="textInput" placeholder="请输入要分析的句子或段落"></textarea>
+                <button type="submit">文本分析</button>
+            </form>
+
+            <div class="result" id="result">
+                {% if sentiment_analysis %}
+                <div class="analysis-section">
+                    <h3 class="analysis-title">情感分析结果</h3>
+                    <div class="sentiment-result">
+                        <div class="sentiment-bar">
+                            <div class="sentiment-value" style="width: {{ sentiment_analysis.score }}%;"></div>
+                        </div>
+                        <span style="margin-left: 10px;">{{ sentiment_analysis.label }}</span>
+                    </div>
+                    <div class="sentiment-scores">
+                        <div class="sentiment-score positive-score">
+                            正向得分: {{ sentiment_analysis.positive_score }}
+                        </div>
+                        <div class="sentiment-score negative-score">
+                            负向得分: {{ sentiment_analysis.negative_score }}
+                        </div>
+                    </div>
+                    <p>置信度: {{ sentiment_analysis.confidence }}%</p>
+                </div>
+                {% endif %}
+
+                {% if topic_analysis %}
+                <div class="analysis-section">
+                    <h3 class="analysis-title">主题分析结果</h3>
+                    {% for topic in topic_analysis %}
+                    <div class="topic-item">
+                        <span class="topic-tag">{{ topic.keyword }}</span>
+                        <div class="topic-info">
+                            <span>权重: {{ topic.weight }}%</span>
+                            <span style="margin-left: 15px;">频率: {{ topic.frequency }}</span>
+                            <span style="margin-left: 15px;">相关度: {{ topic.relevance }}%</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if error %}
+                <p class="error">{{ error }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const backgrounds = [
+            'static/images/nlp1.jpg',
+            'static/images/nlp2.jpg',
+            'static/images/nlp3.jpg',
+            'static/images/nlp4.jpg'
+        ];
+        let currentIndex = 0;
+
+        function changeBackground() {
+            document.body.style.backgroundImage = `url('${backgrounds[currentIndex]}')`;
+            currentIndex = (currentIndex + 1) % backgrounds.length;
+        }
+
+        changeBackground();
+        setInterval(changeBackground, 5000);
+        
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelector('.nav-item.active').classList.remove('active');
+                if (!this.classList.contains('logout')) {
+                    this.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

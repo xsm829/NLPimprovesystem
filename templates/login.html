@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基于NLP的生词识别与学习系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .background-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%);
+            opacity: 0.1;
+            animation: gradientEffect 20s infinite;
+        }
+
+        @keyframes gradientEffect {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            width: 400px;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        .system-title {
+            text-align: center;
+            color: #1a237e;
+            margin-bottom: 30px;
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        .system-icon {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .system-icon i {
+            font-size: 3em;
+            color: #1a237e;
+            animation: bookIcon 3s ease infinite;
+        }
+
+        @keyframes bookIcon {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #1a237e;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e8eaf6;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: #1a237e;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(26, 35, 126, 0.3);
+        }
+
+        .links {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .links a {
+            color: #1a237e;
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
+
+        .links a:hover {
+            color: #3949ab;
+        }
+
+        .flash {
+            color: #f44336;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            background: rgba(244, 67, 54, 0.1);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-animation"></div>
+    
+    <div class="container">
+        <div class="system-icon">
+            <i class="fas fa-book-reader"></i>
+        </div>
+        <h1 class="system-title">基于NLP的生词识别与学习系统</h1>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="{{ message.category }}">
+                    {{ message.message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <form method="POST">
+            <div class="form-group">
+                <label><i class="fas fa-user"></i> 用户名</label>
+                <input type="text" name="username" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-envelope"></i> 邮箱</label>
+                <input type="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-lock"></i> 密码</label>
+                <input type="password" name="password" required>
+            </div>
+            <button type="submit" class="btn">登 录</button>
+            <div class="links">
+                <a href="{{ url_for('register') }}"><i class="fas fa-user-plus"></i> 注册新账号</a> |
+                <a href="{{ url_for('forgot_password') }}"><i class="fas fa-key"></i> 忘记密码?</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

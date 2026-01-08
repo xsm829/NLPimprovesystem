@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基于NLP的生词识别与学习系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: #f0f2f5;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-image 1s ease-in-out;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%);
+            padding: 20px;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            font-size: 2.5em;
+            color: #ffffff;
+        }
+
+        .logo-text {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        .nav {
+            background: white;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            justify-content: space-around;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item a {
+            text-decoration: none;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .nav-item:hover {
+            background: #e8eaf6;
+        }
+
+        .nav-item.active {
+            background: #3f51b5;
+        }
+
+        .nav-item.active a {
+            color: white;
+        }
+
+        .nav-item.logout {
+            color: #f44336;
+        }
+
+        .nav-item.logout:hover {
+            background: #ffebee;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-book-reader logo-icon"></i>
+            <span class="logo-text">基于NLP的生词识别与学习系统</span>
+        </div>
+    </header>
+
+    <nav class="nav">
+        <ul class="nav-list">
+            <li class="nav-item active">
+                <a href="#"><i class="fas fa-home"></i> 首页</a>
+            </li>
+            <li class="nav-item">
+                <a href="personal_information"><i class="fas fa-user"></i> 个人信息</a>
+            </li>
+            <li class="nav-item">
+                <a href="word_recognition"><i class="fas fa-language"></i> 生词识别</a>
+            </li>
+            <li class="nav-item">
+                <a href="word_learning"><i class="fas fa-graduation-cap"></i> 单词学习</a>
+            </li>
+            <li class="nav-item"><a href="word_analysis"><i class="fas fa-chart-bar"></i> 文本分析</a></li>
+            <li class="nav-item logout">
+                <a href="logout"><i class="fas fa-sign-out-alt"></i> 退出登录</a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="main-content">
+        <!-- 主要内容区域 -->
+        <h2>欢迎使用基于NLP的生词识别与学习系统</h2>
+    </div>
+
+    <script>
+        // 背景图片轮播
+        const backgrounds = [
+            'static/images/nlp1.jpg',
+            'static/images/nlp2.jpg',
+            'static/images/nlp3.jpg',
+            'static/images/nlp4.jpg'
+        ];
+        let currentIndex = 0;
+
+        function changeBackground() {
+            document.body.style.backgroundImage = `url('${backgrounds[currentIndex]}')`;
+            currentIndex = (currentIndex + 1) % backgrounds.length;
+        }
+
+        // 初始化背景
+        changeBackground();
+        // 每5秒切换一次背景
+        setInterval(changeBackground, 5000);
+        // 导航栏active状态切换
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelector('.nav-item.active').classList.remove('active');
+                if (!this.classList.contains('logout')) {
+                    this.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
